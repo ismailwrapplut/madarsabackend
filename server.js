@@ -221,7 +221,16 @@ app.post("/add-product", upload.any(), async (req, res) => {
       req.body.studenttehseel &&
       req.body.studentdistt &&
       req.body.studentstate &&
-      req.body.studentaadharno
+      req.body.studentaadharno&&
+      req.body.studentname2 &&
+      req.body.studentfathername2 &&
+      req.body.studentdateofbirth2 &&
+      req.body.studentvillage2 &&
+      req.body.studentpost2 &&
+      req.body.studenttehseel2 &&
+      req.body.studentdistt2 &&
+      req.body.studentstate2 &&
+      req.body.studentaadharno2
     ) {
       let new_product = await product.create({
         studentprofilepic :req.files[0].filename,
@@ -247,6 +256,15 @@ app.post("/add-product", upload.any(), async (req, res) => {
         studentdistt :req.body.studentdistt,
         studentstate :req.body.studentstate,
         studentaadharno :req.body.studentaadharno,
+        studentname2 :req.body.studentname2,
+        studentfathername2 :req.body.studentfathername2,
+        studentdateofbirth2 :req.body.studentdateofbirth2,
+        studentvillage2 :req.body.studentvillage2,
+        studentpost2 :req.body.studentpost2,
+        studenttehseel2: req.body.studenttehseel2,
+        studentdistt2 :req.body.studentdistt2,
+        studentstate2 :req.body.studentstate2,
+        studentaadharno2 :req.body.studentaadharno2,
         user_id : req.user.id,
       });
      
@@ -309,7 +327,16 @@ app.post("/update-product", upload.any(), (req, res) => {
       req.body.studenttehseel &&
       req.body.studentdistt &&
       req.body.studentstate &&
-      req.body.studentaadharno
+      req.body.studentaadharno&&
+      req.body.studentname2 &&
+      req.body.studentfathername2 &&
+      req.body.studentdateofbirth2 &&
+      req.body.studentvillage2 &&
+      req.body.studentpost2 &&
+      req.body.studenttehseel2 &&
+      req.body.studentdistt2 &&
+      req.body.studentstate2 &&
+      req.body.studentaadharno2
     ) {
       product.findById(req.body.id).then((new_product) => {
         if (
@@ -390,7 +417,33 @@ app.post("/update-product", upload.any(), (req, res) => {
         if (req.body.studentaadharno) {
           new_product.studentaadharno = req.body.studentaadharno;
         }
-       
+        if (req.body.studentname2) {
+          new_product.studentname2 = req.body.studentname2;
+        }
+        if (req.body.studentfathername2) {
+          new_product.studentfathername2 = req.body.studentfathername2;
+        }
+        if (req.body.studentdateofbirth2) {
+          new_product.studentdateofbirth2 = req.body.studentdateofbirth2;
+        }
+        if (req.body.studentvillage2) {
+          new_product.studentvillage2 = req.body.studentvillage2;
+        }
+        if (req.body.studentpost2) {
+          new_product.studentpost2 = req.body.studentpost2;
+        }
+        if (req.body.studenttehseel2) {
+          new_product.studenttehseel2 = req.body.studenttehseel2;
+        }
+        if (req.body.studentdistt2) {
+          new_product.studentdistt2 = req.body.studentdistt2;
+        }
+        if (req.body.studentstate2) {
+          new_product.studentstate2 = req.body.studentstate2;
+        }
+        if (req.body.studentaadharno2) {
+          new_product.studentaadharno2 = req.body.studentaadharno2;
+        }
 
         new_product
           .save()
@@ -477,23 +530,35 @@ app.get("/get-product", (req, res) => {
         date: 1,
         id: 1,
         studentprofilepic:1,
-        sarparastname:1,
-        sarparastfathername:1,
-        sarparastvillage:1,
-        sarparastpost:1,
-        sarparasttehseel:1,
-        sarparastdistt:1,
-        sarparaststate:1,
-        sarparastaadharno:1,
-        studentname:1,
-        studentfathername:1,
-        studentdateofbirth:1,
-        studentvillage:1,
-        studentpost:1,
-        studenttehseel:1,
-        studentdistt:1,
-        studentstate:1,
-        studentaadharno:1,
+	sarparastprofilepic:1,
+	formDate:1,  
+	formnumber:1,
+	sarparastname: 1,
+	sarparastfathername: 1,
+	sarparastvillage: 1,
+	sarparastpost: 1,
+	sarparasttehseel: 1,
+	sarparastdistt: 1,
+	sarparaststate: 1,
+	sarparastaadharno:1,
+	studentname: 1,
+	studentfathername: 1,
+	studentdateofbirth: 1,
+	studentvillage: 1,
+	studentpost: 1,
+	studenttehseel: 1,
+	studentdistt: 1,
+	studentstate: 1,
+	studentaadharno:1,
+	studentname2: 1,
+	studentfathername2: 1,
+	studentdateofbirth2: 1,
+	studentvillage2: 1,
+	studentpost2: 1,
+	studenttehseel2: 1,
+	studentdistt2: 1,
+	studentstate2: 1,
+	studentaadharno2:1,
       })
       .skip(perPage * page - perPage)
       .limit(perPage)
