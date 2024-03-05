@@ -195,9 +195,9 @@ function checkUserAndGenerateToken(data, req, res) {
 
 /* Api to add Product */
 app.post("/add-product", upload.any(), async (req, res) => {
-  console.log(req.files)
+  
+  console.log(req.body)
   try {
-
     if (
       req.files &&
       req.files[0] &&
@@ -221,7 +221,7 @@ app.post("/add-product", upload.any(), async (req, res) => {
       req.body.studenttehseel &&
       req.body.studentdistt &&
       req.body.studentstate &&
-      req.body.studentaadharno&&
+      req.body.studentaadharno &&
       req.body.studentname2 &&
       req.body.studentfathername2 &&
       req.body.studentdateofbirth2 &&
@@ -230,44 +230,60 @@ app.post("/add-product", upload.any(), async (req, res) => {
       req.body.studenttehseel2 &&
       req.body.studentdistt2 &&
       req.body.studentstate2 &&
-      req.body.studentaadharno2
+      req.body.studentaadharno2 &&
+      req.body.shoba &&
+      req.body.dateshamsi &&
+      req.body.datekamari &&
+      req.body.darjarequested &&
+      req.body.darjagiven &&
+      req.body.beforethis &&
+      req.body.talibilmrishta &&
+      req.body.sarparastmobileno &&
+      req.body.sarparastwhatsappno
     ) {
       let new_product = await product.create({
-        studentprofilepic :req.files[0].filename,
-        sarparastprofilepic :req.files[1].filename,
-        sarparastname :req.body.sarparastname,
-        sarparastfathername :req.body.sarparastfathername,
-        sarparastvillage :req.body.sarparastvillage,
-        formDate :req.body.formDate,
-        formnumber :req.body.formnumber,
+        studentprofilepic: req.files[0].filename,
+        sarparastprofilepic: req.files[1].filename,
+        sarparastname: req.body.sarparastname,
+        sarparastfathername: req.body.sarparastfathername,
+        sarparastvillage: req.body.sarparastvillage,
+        formDate: req.body.formDate,
+        formnumber: req.body.formnumber,
 
-
-        sarparastpost :req.body.sarparastpost,
-        sarparasttehseel :req.body.sarparasttehseel,
-        sarparastdistt :req.body.sarparastdistt,
-        sarparaststate :req.body.sarparaststate,
-        sarparastaadharno :req.body.sarparastaadharno,
-        studentname :req.body.studentname,
-        studentfathername :req.body.studentfathername,
-        studentdateofbirth :req.body.studentdateofbirth,
-        studentvillage :req.body.studentvillage,
-        studentpost :req.body.studentpost,
+        sarparastpost: req.body.sarparastpost,
+        sarparasttehseel: req.body.sarparasttehseel,
+        sarparastdistt: req.body.sarparastdistt,
+        sarparaststate: req.body.sarparaststate,
+        sarparastaadharno: req.body.sarparastaadharno,
+        studentname: req.body.studentname,
+        studentfathername: req.body.studentfathername,
+        studentdateofbirth: req.body.studentdateofbirth,
+        studentvillage: req.body.studentvillage,
+        studentpost: req.body.studentpost,
         studenttehseel: req.body.studenttehseel,
-        studentdistt :req.body.studentdistt,
-        studentstate :req.body.studentstate,
-        studentaadharno :req.body.studentaadharno,
-        studentname2 :req.body.studentname2,
-        studentfathername2 :req.body.studentfathername2,
-        studentdateofbirth2 :req.body.studentdateofbirth2,
-        studentvillage2 :req.body.studentvillage2,
-        studentpost2 :req.body.studentpost2,
+        studentdistt: req.body.studentdistt,
+        studentstate: req.body.studentstate,
+        studentaadharno: req.body.studentaadharno,
+        studentname2: req.body.studentname2,
+        studentfathername2: req.body.studentfathername2,
+        studentdateofbirth2: req.body.studentdateofbirth2,
+        studentvillage2: req.body.studentvillage2,
+        studentpost2: req.body.studentpost2,
         studenttehseel2: req.body.studenttehseel2,
-        studentdistt2 :req.body.studentdistt2,
-        studentstate2 :req.body.studentstate2,
-        studentaadharno2 :req.body.studentaadharno2,
-        user_id : req.user.id,
+        studentdistt2: req.body.studentdistt2,
+        studentstate2: req.body.studentstate2,
+        studentaadharno2: req.body.studentaadharno2,
+        shoba: req.body.shoba,
+        dateshamsi: req.body.dateshamsi,
+        datekamari: req.body.datekamari,
+        darjarequested: req.body.darjarequested,
+        darjagiven: req.body.darjagiven,
+        beforethis: req.body.beforethis,
+        talibilmrishta: req.body.talibilmrishta,
+        sarparastmobileno: req.body.sarparastmobileno,
+        sarparastwhatsappno: req.body.sarparastwhatsappno,
+        user_id: req.user.id,
       });
-     
 
       await new_product
         .save()
@@ -291,7 +307,7 @@ app.post("/add-product", upload.any(), async (req, res) => {
     }
   } catch (e) {
     res.status(400).json({
-      errorMessage: "Something went wrong!"+e,
+      errorMessage: "Something went wrong!" + e,
       status: false,
     });
   }
@@ -299,18 +315,17 @@ app.post("/add-product", upload.any(), async (req, res) => {
 
 /* Api to update Product */
 app.post("/update-product", upload.any(), (req, res) => {
-  console.log(req.body)
-  console.log(req.files)
+  console.log(req.body);
+  console.log(req.files);
   try {
     if (
       req.files &&
       req.files[0] &&
       req.files[1] &&
       req.body &&
-    req.body.id &&
-    req.body.formDate &&
-    req.body.formnumber &&
-
+      req.body.id &&
+      req.body.formDate &&
+      req.body.formnumber &&
       req.body.sarparastname &&
       req.body.sarparastfathername &&
       req.body.sarparastvillage &&
@@ -327,7 +342,7 @@ app.post("/update-product", upload.any(), (req, res) => {
       req.body.studenttehseel &&
       req.body.studentdistt &&
       req.body.studentstate &&
-      req.body.studentaadharno&&
+      req.body.studentaadharno &&
       req.body.studentname2 &&
       req.body.studentfathername2 &&
       req.body.studentdateofbirth2 &&
@@ -336,7 +351,16 @@ app.post("/update-product", upload.any(), (req, res) => {
       req.body.studenttehseel2 &&
       req.body.studentdistt2 &&
       req.body.studentstate2 &&
-      req.body.studentaadharno2
+      req.body.studentaadharno2 &&
+      req.body.shoba &&
+      req.body.dateshamsi &&
+      req.body.datekamari &&
+      req.body.darjarequested &&
+      req.body.darjagiven &&
+      req.body.beforethis &&
+      req.body.talibilmrishta &&
+      req.body.sarparastmobileno &&
+      req.body.sarparastwhatsappno
     ) {
       product.findById(req.body.id).then((new_product) => {
         if (
@@ -345,9 +369,8 @@ app.post("/update-product", upload.any(), (req, res) => {
           req.files[0].filename &&
           req.files[1] &&
           req.files[1].filename &&
-          new_product.studentprofilepic&&
+          new_product.studentprofilepic &&
           new_product.sarparastprofilepic
-
         ) {
           var path = `./uploads/${new_product.studentprofilepic}`;
           fs.unlinkSync(path);
@@ -389,7 +412,7 @@ app.post("/update-product", upload.any(), (req, res) => {
         if (req.body.sarparastaadharno) {
           new_product.sarparastaadharno = req.body.sarparastaadharno;
         }
-       
+
         if (req.body.studentname) {
           new_product.studentname = req.body.studentname;
         }
@@ -444,6 +467,33 @@ app.post("/update-product", upload.any(), (req, res) => {
         if (req.body.studentaadharno2) {
           new_product.studentaadharno2 = req.body.studentaadharno2;
         }
+        if (req.body.shoba) {
+          new_product.shoba = req.body.shoba;
+        }
+        if (req.body.dateshamsi) {
+          new_product.dateshamsi = req.body.dateshamsi;
+        }
+        if (req.body.datekamari) {
+          new_product.datekamari = req.body.datekamari;
+        }
+        if (req.body.darjarequested) {
+          new_product.darjarequested = req.body.darjarequested;
+        }
+        if (req.body.darjagiven) {
+          new_product.darjagiven = req.body.darjagiven;
+        }
+        if (req.body.beforethis) {
+          new_product.beforethis = req.body.beforethis;
+        }
+        if (req.body.talibilmrishta) {
+          new_product.talibilmrishta = req.body.talibilmrishta;
+        }
+        if (req.body.sarparastmobileno) {
+          new_product.sarparastmobileno = req.body.sarparastmobileno;
+        }
+        if (req.body.sarparastwhatsappno) {
+          new_product.sarparastwhatsappno = req.body.sarparastwhatsappno;
+        }
 
         new_product
           .save()
@@ -481,17 +531,14 @@ app.post("/delete-product", (req, res) => {
       product
         .findByIdAndDelete(req.body.id)
         .then(() => {
-          
-            res.status(200).json({
-              status: true,
-              title: "Product deleted.",
-            });
-          
+          res.status(200).json({
+            status: true,
+            title: "Product deleted.",
+          });
         })
         .catch((err) => {
           res.status(400).json({
-
-            errorMessage: "Not Able To Delete The Product "+err,
+            errorMessage: "Not Able To Delete The Product " + err,
             status: false,
           });
         });
@@ -529,36 +576,45 @@ app.get("/get-product", (req, res) => {
       .find(query, {
         date: 1,
         id: 1,
-        studentprofilepic:1,
-	sarparastprofilepic:1,
-	formDate:1,  
-	formnumber:1,
-	sarparastname: 1,
-	sarparastfathername: 1,
-	sarparastvillage: 1,
-	sarparastpost: 1,
-	sarparasttehseel: 1,
-	sarparastdistt: 1,
-	sarparaststate: 1,
-	sarparastaadharno:1,
-	studentname: 1,
-	studentfathername: 1,
-	studentdateofbirth: 1,
-	studentvillage: 1,
-	studentpost: 1,
-	studenttehseel: 1,
-	studentdistt: 1,
-	studentstate: 1,
-	studentaadharno:1,
-	studentname2: 1,
-	studentfathername2: 1,
-	studentdateofbirth2: 1,
-	studentvillage2: 1,
-	studentpost2: 1,
-	studenttehseel2: 1,
-	studentdistt2: 1,
-	studentstate2: 1,
-	studentaadharno2:1,
+        studentprofilepic: 1,
+        sarparastprofilepic: 1,
+        formDate: 1,
+        formnumber: 1,
+        sarparastname: 1,
+        sarparastfathername: 1,
+        sarparastvillage: 1,
+        sarparastpost: 1,
+        sarparasttehseel: 1,
+        sarparastdistt: 1,
+        sarparaststate: 1,
+        sarparastaadharno: 1,
+        studentname: 1,
+        studentfathername: 1,
+        studentdateofbirth: 1,
+        studentvillage: 1,
+        studentpost: 1,
+        studenttehseel: 1,
+        studentdistt: 1,
+        studentstate: 1,
+        studentaadharno: 1,
+        studentname2: 1,
+        studentfathername2: 1,
+        studentdateofbirth2: 1,
+        studentvillage2: 1,
+        studentpost2: 1,
+        studenttehseel2: 1,
+        studentdistt2: 1,
+        studentstate2: 1,
+        studentaadharno2: 1,
+        shoba:1,
+dateshamsi:1,
+datekamari:1,
+darjarequested:1,
+darjagiven:1,
+beforethis:1,
+talibilmrishta:1,
+sarparastmobileno:1,
+sarparastwhatsappno:1,
       })
       .skip(perPage * page - perPage)
       .limit(perPage)
@@ -598,21 +654,24 @@ app.get("/get-product", (req, res) => {
   }
 });
 //api to get single product
-app.get('/product/:id', async(req, res) => {
-  console.log(req.params.id)
-  await product.findById(req.params.id).then((product) => {
-    res.status(200).json({
-      product:product
+app.get("/product/:id", async (req, res) => {
+  console.log(req.params.id);
+  await product
+    .findById(req.params.id)
+    .then((product) => {
+      res.status(200).json({
+        product: product,
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        errorMessage: err.message || err,
+        status: false,
+      });
     });
-  }).catch((err)=>{
-    res.status(400).json({
-      errorMessage: err.message || err,
-      status: false,
-    });
-  })
-})
+});
 
 app.listen(2000, (err) => {
   console.log("Server is Runing On port 2000");
-  console.log(err)
+  console.log(err);
 });
