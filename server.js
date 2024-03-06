@@ -47,7 +47,7 @@ var upload = multer({
   },
 });
 app.use(cors());
-app.use(express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(
   bodyParser.urlencoded({
