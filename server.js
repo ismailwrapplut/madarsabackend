@@ -13,6 +13,14 @@ var fs = require("fs");
 var product = require("./model/product.js");
 var user = require("./model/user.js");
 
+
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 var dir = "./uploads";
 var upload = multer({
   storage: multer.diskStorage({
@@ -567,7 +575,7 @@ app.get("/get-product", (req, res) => {
     });
     if (req.query && req.query.search) {
       query["$and"].push({
-        studentname: { $regex: req.query.search },
+        name: { $regex: req.query.search },
       });
     }
     var perPage = 5;
