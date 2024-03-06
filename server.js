@@ -14,13 +14,16 @@ var product = require("./model/product.js");
 var user = require("./model/user.js");
 
 
-app.use(function(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
+var whitelist = ['http://example1.com', 'http://example2.com']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
 var dir = "./uploads";
 var upload = multer({
   storage: multer.diskStorage({
@@ -46,7 +49,7 @@ var upload = multer({
     callback(null, true);
   },
 });
-app.use(cors());
+app.use(cors(corsOptions));
 app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(
