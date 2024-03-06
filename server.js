@@ -12,47 +12,34 @@ mongoose.connect(process.env.MONGODB);
 var fs = require("fs");
 var product = require("./model/product.js");
 var user = require("./model/user.js");
-var path=require('path');
-
-
-
-const corsOpts = {
-  origin: '*',
-
-  methods: [
-    'GET',
-    'POST',
-  ],
-
-  allowedHeaders: [
-    'Content-Type',
-  ],
-};
 
 var dir = "./uploads";
 var upload = multer({
   storage: multer.diskStorage({
-
     destination: function (req, file, callback) {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
-      callback(null, './uploads');
+      callback(null, "./uploads");
     },
-    filename: function (req, file, callback) { callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); }
-
+    filename: function (req, file, callback) {
+      callback(
+        null,
+        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+      );
+    },
   }),
 
   fileFilter: function (req, file, callback) {
-    var ext = path.extname(file.originalname)
-    if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
-      return callback(/*res.end('Only images are allowed')*/ null, false)
+    var ext = path.extname(file.originalname);
+    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
+      return callback(/*res.end('Only images are allowed')*/ null, false);
     }
-    callback(null, true)
-  }
+    callback(null, true);
+  },
 });
 app.use(cors());
-app.use(express.static(path.join(__dirname,'uploads')));
+app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(
   bodyParser.urlencoded({
@@ -62,7 +49,6 @@ app.use(
 );
 
 app.use("/", (req, res, next) => {
-  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
   try {
     if (req.path == "/login" || req.path == "/register" || req.path == "/") {
       next();
@@ -97,7 +83,6 @@ app.get("/", (req, res) => {
 
 /* login api */
 app.post("/login", async (req, res) => {
-  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
 
   try {
     if (req.body && req.body.username && req.body.password) {
@@ -134,7 +119,6 @@ app.post("/login", async (req, res) => {
 
 /* register api */
 app.post("/register", async (req, res) => {
-  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
 
   try {
     if (req.body && req.body.username && req.body.password) {
@@ -213,7 +197,6 @@ function checkUserAndGenerateToken(data, req, res) {
 
 /* Api to add Product */
 app.post("/add-product", upload.any(), async (req, res) => {
-  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
   
   console.log(req.body)
   try {
@@ -334,7 +317,6 @@ app.post("/add-product", upload.any(), async (req, res) => {
 
 /* Api to update Product */
 app.post("/update-product", upload.any(), (req, res) => {
-  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
 
   console.log(req.body);
   console.log(req.files);
@@ -547,7 +529,6 @@ app.post("/update-product", upload.any(), (req, res) => {
 
 /* Api to delete Product */
 app.post("/delete-product", (req, res) => {
-  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
 
   try {
     if (req.body && req.body.id) {
@@ -581,7 +562,6 @@ app.post("/delete-product", (req, res) => {
 
 /*Api to get and search product with pagination and search by name*/
 app.get("/get-product", (req, res) => {
-  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
 
   try {
     var query = {};
@@ -680,7 +660,6 @@ sarparastwhatsappno:1,
 });
 //api to get single product
 app.get("/product/:id", async (req, res) => {
-  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
 
   console.log(req.params.id);
   await product
