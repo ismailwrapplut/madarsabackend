@@ -567,7 +567,7 @@ app.get("/get-product", (req, res) => {
     });
     if (req.query && req.query.search) {
       query["$and"].push({
-        name: { $regex: req.query.search },
+        studentname: { $regex: req.query.search },
       });
     }
     var perPage = 5;
