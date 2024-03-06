@@ -104,7 +104,7 @@ app.post("/login", async (req, res) => {
       }
     } else {
       res.status(400).json({
-        errorMessage: "Add proper parameter first!",
+        errorMessage: "Add all Details Properly first!",
         status: false,
       });
     }
@@ -159,7 +159,7 @@ app.post("/register", async (req, res) => {
       }
     } else {
       res.status(400).json({
-        errorMessage: "Add proper parameter first!",
+        errorMessage: "Add proper details first!",
         status: false,
       });
     }
@@ -301,7 +301,7 @@ app.post("/add-product", upload.any(), async (req, res) => {
         });
     } else {
       res.status(400).json({
-        errorMessage: "Add proper parameter first!",
+        errorMessage: "Add all details first!",
         status: false,
       });
     }
@@ -512,7 +512,7 @@ app.post("/update-product", upload.any(), (req, res) => {
       });
     } else {
       res.status(400).json({
-        errorMessage: "Add proper parameter first!",
+        errorMessage: "Add all details first!",
         status: false,
       });
     }
