@@ -52,7 +52,7 @@ var upload = multer({
     callback(null, true);
   },
 });
-app.use(cors(corsOpts));
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(
@@ -63,6 +63,7 @@ app.use(
 );
 
 app.use("/", (req, res, next) => {
+  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
   try {
     if (req.path == "/login" || req.path == "/register" || req.path == "/") {
       next();
@@ -97,6 +98,8 @@ app.get("/", (req, res) => {
 
 /* login api */
 app.post("/login", async (req, res) => {
+  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
+
   try {
     if (req.body && req.body.username && req.body.password) {
       const data = await user.find({ username: req.body.username });
@@ -132,6 +135,8 @@ app.post("/login", async (req, res) => {
 
 /* register api */
 app.post("/register", async (req, res) => {
+  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
+
   try {
     if (req.body && req.body.username && req.body.password) {
       const data = await user.find({ username: req.body.username });
@@ -209,6 +214,7 @@ function checkUserAndGenerateToken(data, req, res) {
 
 /* Api to add Product */
 app.post("/add-product", upload.any(), async (req, res) => {
+  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
   
   console.log(req.body)
   try {
@@ -329,6 +335,8 @@ app.post("/add-product", upload.any(), async (req, res) => {
 
 /* Api to update Product */
 app.post("/update-product", upload.any(), (req, res) => {
+  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
+
   console.log(req.body);
   console.log(req.files);
   try {
@@ -540,6 +548,8 @@ app.post("/update-product", upload.any(), (req, res) => {
 
 /* Api to delete Product */
 app.post("/delete-product", (req, res) => {
+  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
+
   try {
     if (req.body && req.body.id) {
       product
@@ -572,6 +582,8 @@ app.post("/delete-product", (req, res) => {
 
 /*Api to get and search product with pagination and search by name*/
 app.get("/get-product", (req, res) => {
+  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
+
   try {
     var query = {};
     query["$and"] = [];
@@ -669,6 +681,8 @@ sarparastwhatsappno:1,
 });
 //api to get single product
 app.get("/product/:id", async (req, res) => {
+  res.header("Access-Control-Allow-Origin","https://jamiaislamiamadarsa.netlify.app")
+
   console.log(req.params.id);
   await product
     .findById(req.params.id)
