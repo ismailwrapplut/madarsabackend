@@ -355,8 +355,8 @@ app.post("/add-product", uploadhandle(), async (req, res) => {
 });
 
 /* Api to update Product */
-app.post("/update-product", uploadhandle(), (req, res) => {
-
+app.post("/update-product",  (req, res) => {
+  uploadhandle()
   console.log(req.body);
   console.log(req.files);
   try {
