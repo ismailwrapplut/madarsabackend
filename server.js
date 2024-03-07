@@ -236,7 +236,7 @@ function checkUserAndGenerateToken(data, req, res) {
 }
 
 /* Api to add Product */
-app.post("/add-product", uploadhandle.any(), async (req, res) => {
+app.post("/add-product", uploadhandle(), async (req, res) => {
   console.log(req.files)
   try {
     if (
@@ -355,7 +355,7 @@ app.post("/add-product", uploadhandle.any(), async (req, res) => {
 });
 
 /* Api to update Product */
-app.post("/update-product", uploadhandle.any(), (req, res) => {
+app.post("/update-product", uploadhandle(), (req, res) => {
 
   console.log(req.body);
   console.log(req.files);
