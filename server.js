@@ -236,7 +236,8 @@ function checkUserAndGenerateToken(data, req, res) {
 }
 
 /* Api to add Product */
-app.post("/add-product", uploadhandle(), async (req, res) => {
+app.post("/add-product", async (req, res) => {
+  uploadhandle()
   console.log(req.files)
   try {
     if (
