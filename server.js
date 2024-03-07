@@ -12,32 +12,72 @@ mongoose.connect(process.env.MONGODB);
 var fs = require("fs");
 var product = require("./model/product.js");
 var user = require("./model/user.js");
-
-var dir = "./uploads";
-var upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, callback) {
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-      }
-      callback(null, "./uploads");
-    },
-    filename: function (req, file, callback) {
-      callback(
-        null,
-        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-      );
-    },
-  }),
-
-  fileFilter: function (req, file, callback) {
-    var ext = path.extname(file.originalname);
-    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
-      return callback(/*res.end('Only images are allowed')*/ null, false);
-    }
-    callback(null, true);
-  },
+const cloudinary = require("cloudinary").v2;
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const myUploadMiddleware = upload.single("sample_file");
+          
+cloudinary.config({ 
+  cloud_name: 'djy7d8le4', 
+  api_key: '344996317587785', 
+  api_secret: 'Bje_Rq5jewffxH7rMNwAjmSMdxo' 
 });
+async function handleUpload(file) {
+  const res = await cloudinary.uploader.upload(file, {
+    resource_type: "auto",
+  });
+  return res;
+}
+var dir = "./uploads";
+// var upload = multer({
+//   storage: multer.diskStorage({
+//     destination: function (req, file, callback) {
+//       if (!fs.existsSync(dir)) {
+//         fs.mkdirSync(dir);
+//       }
+//       callback(null, "./uploads");
+//     },
+//     filename: function (req, file, callback) {
+//       callback(
+//         null,
+//         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+//       );
+//     },
+//   }),
+
+//   fileFilter: function (req, file, callback) {
+//     var ext = path.extname(file.originalname);
+//     if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
+//       return callback(/*res.end('Only images are allowed')*/ null, false);
+//     }
+//     callback(null, true);
+//   },
+// });
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  });
+}
+const uploadhandle = async (req, res) => {
+  try {
+    await runMiddleware(req, res, myUploadMiddleware);
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+    const cldRes = await handleUpload(dataURI);
+    res.json(cldRes);
+  } catch (error) {
+    console.log(error);
+    res.send({
+      message: error.message,
+    });
+  }
+};
+
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json()); // to support JSON-encoded bodies
@@ -177,7 +217,7 @@ function checkUserAndGenerateToken(data, req, res) {
   jwt.sign(
     { user: data.username, id: data._id },
     "shhhhh11111",
-    { expiresIn: "1d" },
+    { expiresIn: "30d" },
     (err, token) => {
       if (err) {
         res.status(400).json({
@@ -196,9 +236,8 @@ function checkUserAndGenerateToken(data, req, res) {
 }
 
 /* Api to add Product */
-app.post("/add-product", upload.any(), async (req, res) => {
-  
-  console.log(req.body)
+app.post("/add-product", uploadhandle.any(), async (req, res) => {
+  console.log(req.files)
   try {
     if (
       req.files &&
@@ -316,7 +355,7 @@ app.post("/add-product", upload.any(), async (req, res) => {
 });
 
 /* Api to update Product */
-app.post("/update-product", upload.any(), (req, res) => {
+app.post("/update-product", uploadhandle.any(), (req, res) => {
 
   console.log(req.body);
   console.log(req.files);
