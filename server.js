@@ -13,69 +13,79 @@ var fs = require("fs");
 var product = require("./model/product.js");
 var user = require("./model/user.js");
 const cloudinary = require("cloudinary").v2;
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-const myUploadMiddleware = upload.single("sample_file");
-          
-cloudinary.config({ 
-  cloud_name: 'djy7d8le4', 
-  api_key: '344996317587785', 
-  api_secret: 'Bje_Rq5jewffxH7rMNwAjmSMdxo' 
-});
-async function handleUpload(file) {
-  const res = await cloudinary.uploader.upload(file, {
-    resource_type: "auto",
-  });
-  return res;
-}
-var dir = "./uploads";
-// var upload = multer({
-//   storage: multer.diskStorage({
-//     destination: function (req, file, callback) {
-//       if (!fs.existsSync(dir)) {
-//         fs.mkdirSync(dir);
-//       }
-//       callback(null, "./uploads");
-//     },
-//     filename: function (req, file, callback) {
-//       callback(
-//         null,
-//         file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-//       );
-//     },
-//   }),
 
-//   fileFilter: function (req, file, callback) {
-//     var ext = path.extname(file.originalname);
-//     if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
-//       return callback(/*res.end('Only images are allowed')*/ null, false);
-//     }
-//     callback(null, true);
-//   },
-// });
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
+cloudinary.config({
+  cloud_name: "djy7d8le4",
+  api_key: "344996317587785",
+  api_secret: "Bje_Rq5jewffxH7rMNwAjmSMdxo",
+});
+let dir = "./uploads";
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, callback) {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
       }
-      return resolve(result);
-    });
+      callback(null, "./uploads");
+    },
+    filename: function (req, file, callback) {
+      callback(
+        null,
+        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+      );
+    },
+  }),
+
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
+      return callback(/*res.end('Only images are allowed')*/ null, false);
+    }
+    callback(null, true);
+  },
+});
+
+// Middleware for handling file uploads
+const handleFileUpload = (req, res, next) => {
+  upload.fields([
+    { name: "studentprofilepic", maxCount: 1 },
+    { name: "sarparastprofilepic", maxCount: 1 },
+  ])(req, res, async (err) => {
+    if (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({ success: false, error: "File upload failed" });
+    }
+
+    const fileUrls = {};
+
+    // Handle each uploaded file
+    for (const field of Object.keys(req.files)) {
+      const file = req.files[field][0];
+
+      try {
+        const result = await cloudinary.uploader.upload(file.path);
+        // Optionally, you can delete the local file after uploading to Cloudinary
+        fs.unlinkSync(file.path);
+
+        // Assign the Cloudinary URL to the corresponding field name
+        fileUrls[field] = result.secure_url;
+      } catch (error) {
+        console.error(error);
+        return res
+          .status(500)
+          .json({ success: false, error: "Internal Server Error" });
+      }
+    }
+
+    // Attach the file URLs to the request object
+    req.fileUrls = fileUrls;
+
+    // Continue to the next middleware or route handler
+    next();
   });
-}
-const uploadhandle = async (req, res) => {
-  try {
-    await runMiddleware(req, res, myUploadMiddleware);
-    const b64 = Buffer.from(req.file.buffer).toString("base64");
-    let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
-    const cldRes = await handleUpload(dataURI);
-    res.json(cldRes);
-  } catch (error) {
-    console.log(error);
-    res.send({
-      message: error.message,
-    });
-  }
 };
 
 app.use(cors());
@@ -123,7 +133,6 @@ app.get("/", (req, res) => {
 
 /* login api */
 app.post("/login", async (req, res) => {
-
   try {
     if (req.body && req.body.username && req.body.password) {
       const data = await user.find({ username: req.body.username });
@@ -159,7 +168,6 @@ app.post("/login", async (req, res) => {
 
 /* register api */
 app.post("/register", async (req, res) => {
-
   try {
     if (req.body && req.body.username && req.body.password) {
       const data = await user.find({ username: req.body.username });
@@ -236,13 +244,13 @@ function checkUserAndGenerateToken(data, req, res) {
 }
 
 /* Api to add Product */
-app.post("/add-product", async (req, res) => {
-  console.log(req.files)
+app.post("/add-product", handleFileUpload, async (req, res) => {
+  console.log(req.fileUrls);
   try {
     if (
-      req.files &&
-      req.files[0] &&
-      req.files[1] &&
+      req.fileUrls &&
+      req.fileUrls.studentprofilepic &&
+      req.fileUrls.sarparastprofilepic &&
       req.body &&
       req.body.formDate &&
       req.body.formnumber &&
@@ -282,11 +290,9 @@ app.post("/add-product", async (req, res) => {
       req.body.sarparastmobileno &&
       req.body.sarparastwhatsappno
     ) {
-  uploadhandle()
-
       let new_product = await product.create({
-        studentprofilepic: req.files[0].filename,
-        sarparastprofilepic: req.files[1].filename,
+        studentprofilepic: req.fileUrls.studentprofilepic,
+        sarparastprofilepic: req.fileUrls.sarparastprofilepic,
         sarparastname: req.body.sarparastname,
         sarparastfathername: req.body.sarparastfathername,
         sarparastvillage: req.body.sarparastvillage,
@@ -357,15 +363,12 @@ app.post("/add-product", async (req, res) => {
 });
 
 /* Api to update Product */
-app.post("/update-product",  (req, res) => {
-  uploadhandle()
-  console.log(req.body);
-  console.log(req.files);
+app.post("/update-product", handleFileUpload, (req, res) => {
   try {
     if (
-      req.files &&
-      req.files[0] &&
-      req.files[1] &&
+      req.fileUrls &&
+      req.fileUrls.studentprofilepic &&
+      req.fileUrls.sarparastprofilepic &&
       req.body &&
       req.body.id &&
       req.body.formDate &&
@@ -408,23 +411,30 @@ app.post("/update-product",  (req, res) => {
     ) {
       product.findById(req.body.id).then((new_product) => {
         if (
-          req.files &&
-          req.files[0] &&
-          req.files[0].filename &&
-          req.files[1] &&
-          req.files[1].filename &&
+          req.fileUrls.studentprofilepic &&
+          req.fileUrls.sarparastprofilepic &&
           new_product.studentprofilepic &&
           new_product.sarparastprofilepic
         ) {
-          var path = `./uploads/${new_product.studentprofilepic}`;
-          fs.unlinkSync(path);
+          var path = new_product.studentprofilepic.split("/")[7];
+          var path2 = new_product.sarparastprofilepic.split("/")[7];
+          var pathnew=path.split(".")[0]
+          var pathnew2=path2.split(".")[0]
+          console.log(pathnew+pathnew2)
+
+          cloudinary.uploader
+          .destroy(pathnew)
+          .then(result => console.log(result));
+          cloudinary.uploader
+          .destroy(pathnew2)
+          .then(result => console.log(result));
         }
 
-        if (req.files && req.files[0] && req.files[0].filename) {
-          new_product.studentprofilepic = req.files[0].filename;
+        if (req.fileUrls && req.fileUrls.studentprofilepic) {
+          new_product.studentprofilepic = req.fileUrls.studentprofilepic;
         }
-        if (req.files && req.files[1] && req.files[1].filename) {
-          new_product.sarparastprofilepic = req.files[1].filename;
+        if (req.fileUrls && req.fileUrls.sarparastprofilepic) {
+          new_product.sarparastprofilepic = req.fileUrls.sarparastprofilepic;
         }
         if (req.body.sarparastname) {
           new_product.sarparastname = req.body.sarparastname;
@@ -570,12 +580,31 @@ app.post("/update-product",  (req, res) => {
 
 /* Api to delete Product */
 app.post("/delete-product", (req, res) => {
-
   try {
     if (req.body && req.body.id) {
+      product.findById(req.body.id).then((new_product)=>{
+        var path = new_product.studentprofilepic.split("/")[7];
+          var path2 = new_product.sarparastprofilepic.split("/")[7];
+          var pathnew=path.split(".")[0]
+          var pathnew2=path2.split(".")[0]
+          console.log(pathnew+pathnew2)
+
+          cloudinary.uploader
+          .destroy(pathnew)
+          .then(result => console.log(result));
+          cloudinary.uploader
+          .destroy(pathnew2)
+          .then(result => console.log(result));
+      }) .catch((err) => {
+        res.status(400).json({
+          errorMessage: "Not Able To Delete The Product " + err,
+          status: false,
+        });
+      });
       product
         .findByIdAndDelete(req.body.id)
         .then(() => {
+
           res.status(200).json({
             status: true,
             title: "Product deleted.",
@@ -603,7 +632,6 @@ app.post("/delete-product", (req, res) => {
 
 /*Api to get and search product with pagination and search by name*/
 app.get("/get-product", (req, res) => {
-
   try {
     var query = {};
     query["$and"] = [];
@@ -652,15 +680,15 @@ app.get("/get-product", (req, res) => {
         studentdistt2: 1,
         studentstate2: 1,
         studentaadharno2: 1,
-        shoba:1,
-dateshamsi:1,
-datekamari:1,
-darjarequested:1,
-darjagiven:1,
-beforethis:1,
-talibilmrishta:1,
-sarparastmobileno:1,
-sarparastwhatsappno:1,
+        shoba: 1,
+        dateshamsi: 1,
+        datekamari: 1,
+        darjarequested: 1,
+        darjagiven: 1,
+        beforethis: 1,
+        talibilmrishta: 1,
+        sarparastmobileno: 1,
+        sarparastwhatsappno: 1,
       })
       .skip(perPage * page - perPage)
       .limit(perPage)
@@ -701,7 +729,6 @@ sarparastwhatsappno:1,
 });
 //api to get single product
 app.get("/product/:id", async (req, res) => {
-
   console.log(req.params.id);
   await product
     .findById(req.params.id)
