@@ -237,7 +237,6 @@ function checkUserAndGenerateToken(data, req, res) {
 
 /* Api to add Product */
 app.post("/add-product", async (req, res) => {
-  uploadhandle()
   console.log(req.files)
   try {
     if (
@@ -283,6 +282,8 @@ app.post("/add-product", async (req, res) => {
       req.body.sarparastmobileno &&
       req.body.sarparastwhatsappno
     ) {
+  uploadhandle()
+
       let new_product = await product.create({
         studentprofilepic: req.files[0].filename,
         sarparastprofilepic: req.files[1].filename,
