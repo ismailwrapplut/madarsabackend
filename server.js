@@ -610,12 +610,7 @@ app.post("/delete-product", (req, res) => {
             title: "Product deleted.",
           });
         })
-        .catch((err) => {
-          res.status(400).json({
-            errorMessage: "Not Able To Delete The Product " + err,
-            status: false,
-          });
-        });
+        
     } else {
       res.status(400).json({
         errorMessage: "Add proper parameter first!",
