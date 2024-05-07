@@ -584,10 +584,11 @@ app.post("/delete-product", (req, res) => {
     if (req.body && req.body.id) {
       product.findById(req.body.id).then((new_product)=>{
         var path = new_product?.studentprofilepic?.split("/")[7];
+        console.log(path)
           var path2 = new_product?.sarparastprofilepic?.split("/")[7];
+        console.log(path2)
           var pathnew=path?.split(".")[0]
           var pathnew2=path2?.split(".")[0]
-          console.log(pathnew+pathnew2)
 
           cloudinary.uploader
           .destroy(pathnew)
