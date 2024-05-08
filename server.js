@@ -339,7 +339,7 @@ app.post("/add-product", handleFileUpload, async (req, res) => {
         .then(() => {
           res.status(200).json({
             status: true,
-            title: "Product Added successfully.",
+            title: "Student Added successfully.",
           });
         })
         .catch((err) => {
@@ -554,7 +554,7 @@ app.post("/update-product", handleFileUpload, (req, res) => {
           .then(() => {
             res.status(200).json({
               status: true,
-              title: "Product updated.",
+              title: "Student updated.",
             });
           })
           .catch((err) => {
@@ -608,7 +608,7 @@ app.post("/delete-product", (req, res) => {
 
           res.status(200).json({
             status: true,
-            title: "Product deleted.",
+            title: "Student deleted.",
           });
         })
         
@@ -696,7 +696,7 @@ app.get("/get-product", (req, res) => {
             if (data && data.length > 0) {
               res.status(200).json({
                 status: true,
-                title: "Product retrived.",
+                title: "Student retrived.",
                 products: data,
                 current_page: page,
                 total: count,
