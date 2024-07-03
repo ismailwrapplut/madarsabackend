@@ -60,9 +60,10 @@ const handleFileUpload = (req, res, next) => {
     }
 
     const fileUrls = {};
-
+    console.log(req.files)
     // Handle each uploaded file
     for (const field of Object.keys(req.files)) {
+      
       const file = req.files[field][0];
 
       try {
