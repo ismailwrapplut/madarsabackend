@@ -48,6 +48,8 @@ const upload = multer({
 
 // Middleware for handling file uploads
 const handleFileUpload = (req, res, next) => {
+  console.log(req.body.file)
+  console.log(req.body.file2)
   upload.fields([
     { name: "studentprofilepic", maxCount: 1 },
     { name: "sarparastprofilepic", maxCount: 1 },
@@ -62,6 +64,7 @@ const handleFileUpload = (req, res, next) => {
     const fileUrls = {};
     console.log(req.files)
     // Handle each uploaded file
+  
     for (const field of Object.keys(req.files)) {
       
       const file = req.files[field][0];
