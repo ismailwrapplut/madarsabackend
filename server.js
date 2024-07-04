@@ -758,6 +758,65 @@ app.get("/product/:id", async (req, res) => {
     });
 });
 
+app.get("/get-students-by-year", (req, res) => {
+  try {
+    const year = parseInt(req.query.year);
+    if (!year) {
+      return res.status(400).json({
+        errorMessage: "Year query parameter is required",
+        status: false,
+      });
+    }
+
+    const query = {
+      $and: [
+        { is_delete: false },
+        { user_id: req.user.id },
+        {
+          date: {
+            $gte: new Date(`${year}-01-01`),
+            $lt: new Date(`${year + 1}-01-01`),
+          },
+        },
+      ],
+    };
+
+    product
+      .find(query, {
+        id: 1,
+        studentname: 1,
+        sarparastname: 1,
+        sarparastmobileno: 1,
+      })
+      .then((data) => {
+        if (data && data.length > 0) {
+          res.status(200).json({
+            status: true,
+            title: "Students retrieved.",
+            students: data,
+          });
+        } else {
+          res.status(400).json({
+            errorMessage: "There are no students!",
+            status: false,
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(400).json({
+          errorMessage: err.message || err,
+          status: false,
+        });
+      });
+  } catch (e) {
+    res.status(400).json({
+      errorMessage: "Something went wrong!",
+      status: false,
+    });
+  }
+});
+
+
 app.listen(2000, (err) => {
   console.log("Server is Runing On port 2000");
   console.log(err);
