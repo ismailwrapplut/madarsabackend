@@ -633,19 +633,31 @@ app.post("/delete-product", (req, res) => {
 /*Api to get and search product with pagination and search by name*/
 app.get("/get-product", (req, res) => {
   try {
-    var query = {};
-    query["$and"] = [];
-    query["$and"].push({
-      is_delete: false,
-      user_id: req.user.id,
-    });
+    const query = {
+      $and: [
+        { is_delete: false },
+        { user_id: req.user.id }
+      ]
+    };
+
     if (req.query && req.query.search) {
+      const searchRegex = new RegExp(req.query.search, "i"); // "i" for case-insensitive
       query["$and"].push({
-        name: { $regex: req.query.search },
+        $or: [
+          { studentname: { $regex: searchRegex } },
+          { sarparastname: { $regex: searchRegex } },
+          { sarparastmobileno: { $regex: searchRegex } },
+          { sarparastwhatsappno: { $regex: searchRegex } },
+          { sarparastfathername: { $regex: searchRegex } },
+          { formnumber: { $regex: searchRegex } },
+          // Add other fields you want to search by here...
+        ]
       });
     }
-    var perPage = 5;
-    var page = req.query.page || 1;
+
+    const perPage = 5;
+    const page = req.query.page || 1;
+
     product
       .find(query, {
         date: 1,
@@ -690,17 +702,17 @@ app.get("/get-product", (req, res) => {
         sarparastmobileno: 1,
         sarparastwhatsappno: 1,
       })
-      .skip(perPage * page - perPage)
+      .skip(perPage * (page - 1))
       .limit(perPage)
       .then((data) => {
         product
           .find(query)
-          .count()
+          .countDocuments()
           .then((count) => {
             if (data && data.length > 0) {
               res.status(200).json({
                 status: true,
-                title: "Student retrived.",
+                title: "Students retrieved.",
                 products: data,
                 current_page: page,
                 total: count,
@@ -708,7 +720,7 @@ app.get("/get-product", (req, res) => {
               });
             } else {
               res.status(400).json({
-                errorMessage: "There is no Student!",
+                errorMessage: "There are no students!",
                 status: false,
               });
             }
@@ -727,6 +739,7 @@ app.get("/get-product", (req, res) => {
     });
   }
 });
+
 //api to get single product
 app.get("/product/:id", async (req, res) => {
   console.log(req.params.id);
