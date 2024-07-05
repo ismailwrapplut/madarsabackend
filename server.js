@@ -784,9 +784,17 @@ app.get("/get-students-by-year", (req, res) => {
     product
       .find(query, {
         id: 1,
-        studentname: 1,
-        sarparastname: 1,
-        sarparastmobileno: 1,
+        studentname2:1,
+        studentfathername2:1,
+        studentdateofbirth:1,
+        studentpost2:1,
+        studenttehseel2:1,
+        studentdistt2:1,
+        studentstate2:1,
+        studentaadharno:1,
+        formnumber:1,
+        formData:1,
+
       })
       .then((data) => {
         if (data && data.length > 0) {
