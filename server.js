@@ -789,6 +789,8 @@ app.get("/get-students-by-year", (req, res) => {
         studentdateofbirth:1,
         studentpost2:1,
         studenttehseel2:1,
+        studentvillage2:1,
+
         studentdistt2:1,
         studentstate2:1,
         studentaadharno:1,
